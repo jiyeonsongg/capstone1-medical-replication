@@ -1,0 +1,241 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+**LCA(Latent Class Analysis) with variables age, admission type (elective or emergency) and morbiditiy composition of each patient**
+```{r}
+install.packages("RPostgreSQL")
+install.packages("poLCA")
+
+library(RPostgreSQL)
+library(poLCA)
+```
+Establish connection to database in PostgreSQL
+```{r}
+#Establish connection to database in PostgreSQL
+conn <- dbConnect(drv="PostgreSQL",
+                  dbname="mimic",
+                  host= "localhost",
+                  user="postgres")
+```
+Query* to select necessary variables -
+
+*Assuming create_elixhauser, create_patient_info,
+*and create_elixhauser_final have been run in database already,
+```{r}
+# *Assuming all necessary tables have 
+# *have been created in database already
+# Query* to select patient cohort -
+
+query <- "SELECT * FROM ELIXHAUSER_MATCH;"
+```
+Store query results
+
+```{r}
+final_table <- dbGetQuery(conn, query)
+```
+
+Factor all variables for LCA (poLCA requires factored data)
+```{r}
+final_table$age <- as.factor(final_table$rounded_age)
+
+final_table$admission_type_encoded <- as.factor(final_table$admission_type_encoded)
+
+comorbidity_columns <- c(
+  "congestive_heart_failure",
+  "cardiac_arrhythmias",
+  "valvular_disease",
+  "pulmonary_circulation",
+  "peripheral_vascular",
+  "hypertension",
+  "paralysis",
+  "other_neurological",
+  "chronic_pulmonary",
+  "diabetes_uncomplicated",
+  "diabetes_complicated",
+  "hypothyroidism",
+  "renal_failure",
+  "liver_disease",
+  "peptic_ulcer",
+  "aids",
+  "lymphoma",
+  "metastatic_cancer",
+  "solid_tumor",
+  "rheumatoid_arthritis",
+  "coagulopathy",
+  "obesity",
+  "weight_loss",
+  "fluid_electrolyte",
+  "blood_loss_anemia",
+  "deficiency_anemias",
+  "alcohol_abuse",
+  "drug_abuse",
+  "psychoses",
+  "depression"
+)
+
+
+final_table[comorbidity_columns] <- lapply(
+                              final_table[comorbidity_columns], as.factor)
+```
+
+Define formula for running LCA with poLCA, cbind creates matrix 
+with observed variables, and "~1" indicates 1 latent class being created
+```{r}
+lca_formula <- cbind(rounded_age, admission_type_encoded, congestive_heart_failure, 
+                     cardiac_arrhythmias, valvular_disease, 
+                     pulmonary_circulation,
+                     peripheral_vascular, hypertension,
+                     paralysis,
+                     other_neurological,
+                     chronic_pulmonary,
+                     diabetes_uncomplicated,
+                     diabetes_complicated, 
+                     hypothyroidism,
+                     renal_failure,
+                     liver_disease,
+                     peptic_ulcer,
+                     aids,
+                     lymphoma,
+                     metastatic_cancer,
+                     solid_tumor,
+                     rheumatoid_arthritis,
+                     coagulopathy,
+                     obesity,
+                     weight_loss,
+                     fluid_electrolyte,
+                     blood_loss_anemia,
+                     deficiency_anemias,
+                     alcohol_abuse,
+                     drug_abuse,
+                     psychoses,
+                     depression) ~1
+
+```
+
+Run LCA model, we are using 7 Latent classes to model the data here
+```{r}
+lca_out <- poLCA(lca_formula, data=final_table, nclass=7, graph=FALSE)
+
+dbDisconnect(conn)
+```
+
+Run chi-square test for assessing preferred heterogeneity of morbidities within classes (categorical variables)
+```{r}
+latent_class_memberships <- lca_out$predclass
+significant_p_values <- TRUE 
+
+# Loops through each variable (morbidity) and perform chi-square tests
+for (variable in comorbidity_columns) {
+  contingency_table <- table(final_table[[variable]], latent_class_memberships)
+  
+  # Checks if there are cells with expected frequency < 5
+  if (any(chisq.test(contingency_table)$expected < 5)) {
+    # Performs chi-square test with simulated p-value for small expected frequencies
+    chi_square_result <- chisq.test(contingency_table, simulate.p.value = TRUE, B = 1000)
+  } else {
+    # Performs chi-square test
+    chi_square_result <- chisq.test(contingency_table)
+  }
+  
+  # Checks if the p-value is significant
+  if (chi_square_result$p.value >= 0.05) {
+    significant_p_values <- FALSE
+    break  # No need to continue checking if any p-value is not significant
+  }
+}
+
+# Outputs statement based on the result
+if (significant_p_values) {
+  cat("All p-values are significant (less than 0.05)\nThere is sufficient evidence to conclude all associations between each latent class and morbidity are significant")
+} else {
+  cat("Not all p-values are significant (greater than or equal to 0.05)\n")
+}
+```
+
+Run chi-square test to assess preferred homogeneity amongst classes
+```{r}
+latent_class_memberships <- lca_out$predclass  # Latent class memberships
+
+# Creates a vector to track significance
+significant_p_values <- logical(length(comorbidity_columns))
+
+# Loops through each latent class
+for (latent_class_number in unique(latent_class_memberships)) {
+  subset_data <- final_table[latent_class_memberships == latent_class_number, ]
+  
+  # Loops through each variable of interest (e.g., comorbidity_columns)
+  for (i in seq_along(comorbidity_columns)) {
+    variable <- comorbidity_columns[i]
+    chi_square_result <- chisq.test(table(subset_data[[variable]]))
+    
+    # Track the significance of p-values
+    significant_p_values[i] <- chi_square_result$p.value < 0.05
+  }
+}
+
+# Summarizes based on significance of p-values
+if (all(significant_p_values)) {
+  cat("All p-values are significant (less than 0.05)\nThere is sufficient evidence to conclude all occurences of morbidity groupings amongst each latent class is significant\n")
+} else {
+  cat("Not all p-values are significant (greater than or equal to 0.05)\n")
+}
+```
+
+Run chi-square test for admission_type_encoded (categorical variable)
+```{r}
+admission_type_encoded <- final_table$admission_type_encoded  # Assuming it's a factor or character
+
+# Performs chi-square test for admission_type_encoded and latent_class_memberships
+chi_square_result <- chisq.test(table(admission_type_encoded, latent_class_memberships))
+
+# Checks if the p-value is significant
+if (chi_square_result$p.value < 0.05) {
+  cat("The p-value is significant (less than 0.05)\n")
+} else {
+  cat("All p-values are significant (less than 0.05)\nThere is sufficient evidence to conclude all associations between each latent class and admission type are significant")
+}
+
+
+```
+
+Run ANOVA test for age (quantitative variable)
+Save LCA results into csv
+```{r}
+latent_class_memberships <- as.numeric(as.character(lca_out$predclass))  # Convert to numeric
+
+# Creates a new data frame with numeric variables
+data_for_anova <- data.frame(age = as.numeric(final_table$age), 
+                             latent_class = latent_class_memberships)
+
+# Performs ANOVA for age across latent classes
+anova_result <- aov(formula = age ~ latent_class, data = data_for_anova)
+
+# Extracts p-value from ANOVA results
+p_value_anova <- summary(anova_result)[[1]]$"Pr(>F)"[1]
+
+# Checks if the p-value is significant
+if (p_value_anova < 0.05) {
+  cat("The p-value from ANOVA is significant (less than 0.05)\n")
+} else {
+  cat("The p-value from ANOVA is not significant (greater than or equal to 0.05)\n")
+}
+
+```
+
+Save LCA results into CSVs (each subgroup is saved into a separate csv)
+For instructions on how to match our 7 subgroups to the 6 subgroups from the study, please check 04_morbidity_composition.ipynb on the github repository.
+```{r}
+final_table$subgroup <- apply(lca_out$posterior, 1, which.max) 
+subgroup_counts <- table(final_table$subgroup)
+
+output_folder <- "../processed_data/"
+
+for (i in 1:7) {
+  subgroup_data <- final_table[final_table$subgroup == i, ] 
+  write.csv(subgroup_data, file.path(output_folder, sprintf("subgroup_%d.csv", i)), row.names = FALSE)
+}
+```
+
+
