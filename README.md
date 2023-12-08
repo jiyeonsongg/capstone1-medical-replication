@@ -87,4 +87,7 @@ If you want to see if the package(example, numpy package) is installed:
 ### final_result.pdf
 - Report of what results can be expected from running our project
 
+### repo_commit_history.txt
+- Contains original repository git commit history (due to the ownership of the original repository, we made this new repository.)
+
 
