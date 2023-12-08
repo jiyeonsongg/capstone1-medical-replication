@@ -1,0 +1,58 @@
+2527517 - Jiyeon Song, 17 hours ago : Update README.md
+ad6b5fa - Vibha Sastry, 18 hours ago : Update README.md
+78c986d - Vibha Sastry, 18 hours ago : Added to readme
+446c77b - Vibha Sastry, 18 hours ago : Added to readme
+b44a936 - Vibha Sastry, 18 hours ago : Update README.md
+69b7cd4 - Vibha Sastry, 18 hours ago : Adding EDA readme
+5f39adf - Vibha Sastry, 18 hours ago : Adding readme
+32e35a9 - Vibha Sastry, 18 hours ago : Adding readme
+9590e8b - Vibha Sastry, 18 hours ago : adding analysis readme
+70d37b5 - Vibha Sastry, 18 hours ago : Adding analysis readme
+2a649ab - Oakkar Aung, 18 hours ago : updated read me and changed colors in visualization
+23b3552 - Vibha Sastry, 21 hours ago : Update CONTRIBUTION.md
+e6b347d - Vibha Sastry, 32 hours ago : adding demographics notebook
+cd3870d - Vibha Sastry, 2 days ago : added homogeneity test for LCA
+a9cc987 - Jiyeon Song, 3 days ago : Update README.md
+1781b90 - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+e7cb0d1 - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+ba2e090 - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+2ce4b91 - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+84fdd9a - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+f8b9fc4 - Jiyeon Song, 3 days ago : Update CONTRIBUTION.md
+9e72fd5 - Jiyeon Song, 3 days ago : Delete requirements.R
+ee2248a - Jiyeon Song, 3 days ago : Create CONTRIBUTION.md
+47f3cb0 - Jiyeon Song, 3 days ago : csv file reading instruction added.
+e14e3ec - Oakkar Aung, 3 days ago : Merge pull request #8 from kshannon-ucsd/oakkar
+4d221a5 - Oakkar Aung, 3 days ago : Merge branch 'main' into oakkar
+906b5dd - Oakkar Aung, 3 days ago : Update README.md
+87a26b0 - Rihana Mohamed, 3 days ago : final_result.pdf
+69cff01 - Rihana Mohamed, 3 days ago : idk:
+775bec6 - Oakkar Aung, 3 days ago : Update 01_create_cohort.ipynb
+c0c738d - Rihana Mohamed, 3 days ago : network visualization using provided sql code rather than csv
+875ec49 - Jiyeon Song, 3 days ago : test setting environment
+0273e26 - Rihana Mohamed, 3 days ago : final
+a708576 - Rihana Mohamed, 3 days ago : with instructions
+f800fa9 - Oakkar Aung, 3 days ago : Merge pull request #7 from kshannon-ucsd/oakkarworking
+ceefb97 - Oakkar Aung, 3 days ago : Working version
+da09b1c - Rihana Mohamed, 3 days ago : with updated psycopg2
+496f23b - Rihana Mohamed, 3 days ago : try again
+f3b0473 - Vibha Sastry, 3 days ago : Update requirements.txt
+b593591 - Vibha Sastry, 3 days ago : Finalized lca and cohort_creation
+a1c2214 - Rihana Mohamed, 3 days ago : through sql
+88d0565 - Jiyeon Song, 3 days ago : Rename 05_logistic_regression.R to 04_logistic_regression.R
+8cc9e81 - Jiyeon Song, 3 days ago : Rename 04_morbidity_composition.ipynb to 03_morbidity_composition.ipynb
+e2f968f - Jiyeon Song, 3 days ago : swap the order of the files
+117cbda - Jiyeon Song, 3 days ago : LCA & visualizations comments added
+07d720d - Rihana Mohamed, 4 days ago : circular bar plots and kmeans updated
+37492e8 - Jiyeon Song, 5 days ago : git repo structure ready
+87a7d0c - Oakkar Aung, 5 days ago : Merge pull request #5 from kshannon-ucsd/oakkar
+1273fa8 - Oakkar Aung, 5 days ago : added .keep files
+1a539ff - Oakkar Aung, 5 days ago : Merge pull request #4 from kshannon-ucsd/oakkar
+f8f8d86 - Oakkar Aung, 5 days ago : final first draft
+5657e54 - Oakkar Aung, 5 days ago : Merge pull request #3 from kshannon-ucsd/oakkar
+c6cc73c - Oakkar Aung, 5 days ago : small fix to mentor line
+e6952fa - Oakkar Aung, 5 days ago : Merge pull request #2 from kshannon-ucsd/oakkar
+954cb68 - Oakkar Aung, 5 days ago : README edits and grammer
+f38ccd1 - Oakkar Aung, 5 days ago : Merge pull request #1 from kshannon-ucsd/oakkar
+271728d - Oakkar Aung, 5 days ago : README First info
+9fc47de - Kyle Shannon, 9 days ago : Initial commit
